@@ -53,7 +53,6 @@ namespace OctopusController
                 _tentacles[i].LoadTentacleJoints(tentacleRoots[i],TentacleMode.TENTACLE);
                 //TODO: initialize any variables needed in ccd
             }
-
             _randomTargets = randomTargets;
             //TODO: use the regions however you need to make sure each tentacle stays in its region
 
@@ -62,6 +61,7 @@ namespace OctopusController
               
         public void NotifyTarget(Transform target, Transform region)
         {
+
             _currentRegion = region;
             _target = target;
         }

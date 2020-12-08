@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace OctopusController
 {
-  
+
     public class MyScorpionController
     {
         //TAIL
@@ -15,25 +15,38 @@ namespace OctopusController
         Transform tailEndEffector;
         MyTentacleController _tail;
         float animationRange;
+        float animTime = 0;
+        bool isPlaying = false;
+        public Vector3 start = new Vector3(-4.19f, -2.052f, -2.37f);
+        public Vector3 end = new Vector3(-4.19f, -2.052f, 47.0f);
 
+        float distanceBetweenFutureBases = 1.0f;
         //LEGS
-        Transform[] legTargets;
-        Transform[] legFutureBases;
+        Transform[] legTargets = new Transform[6];
+        Transform[] legFutureBases = new Transform[6];
         MyTentacleController[] _legs = new MyTentacleController[6];
 
-        
+        private Vector3[] copy;
+       
+
+        private float[] distances;
+
+
         #region public
-        public void InitLegs(Transform[] LegRoots,Transform[] LegFutureBases, Transform[] LegTargets)
+        public void InitLegs(Transform[] LegRoots, Transform[] LegFutureBases, Transform[] LegTargets)
         {
             _legs = new MyTentacleController[LegRoots.Length];
             //Legs init
-            for(int i = 0; i < LegRoots.Length; i++)
+            for (int i = 0; i < LegRoots.Length; i++)
             {
                 _legs[i] = new MyTentacleController();
                 _legs[i].LoadTentacleJoints(LegRoots[i], TentacleMode.LEG);
+                legFutureBases[i] = LegFutureBases[i];
+                legTargets[i] = LegTargets[i];
                 //TODO: initialize anything needed for the FABRIK implementation
             }
-
+            distances = new float[_legs[0].Bones.Length - 1];
+            copy = new Vector3[_legs[0].Bones.Length];
         }
 
         public void InitTail(Transform TailBase)
@@ -46,12 +59,27 @@ namespace OctopusController
         //TODO: Check when to start the animation towards target and implement Gradient Descent method to move the joints.
         public void NotifyTailTarget(Transform target)
         {
-
         }
 
         //TODO: Notifies the start of the walking animation
         public void NotifyStartWalk()
         {
+            isPlaying = true;
+            animTime = 0;
+            animationRange = 5;
+           
+            //float animTime = 0;
+            //animationRange = 5;
+
+            //Debug.Log(animationRange);
+
+            //while (animTime < animationRange)
+            //{
+            //    Debug.Log("ALTOKE");
+
+            //    updateLegs();
+            //    animTime += 0.005f;
+            //}
 
         }
 
@@ -59,7 +87,24 @@ namespace OctopusController
 
         public void UpdateIK()
         {
- 
+            if (isPlaying == true)
+            {
+                //copy = copy.Reverse()
+                animTime += Time.deltaTime;
+                // Debug.Log(animTime);
+                if (animTime < animationRange)
+                {
+                    updateLegs();
+                }
+                else
+                {
+                    isPlaying = false;
+                }
+
+            }
+
+
+            //updateLegs();
         }
         #endregion
 
@@ -70,6 +115,7 @@ namespace OctopusController
         {
             //check for the distance to the futureBase, then if it's too far away start moving the leg towards the future base position
             //
+
         }
         //TODO: implement Gradient Descent method to move tail if necessary
         private void updateTail()
@@ -80,7 +126,66 @@ namespace OctopusController
         private void updateLegs()
         {
 
+            for (int i = 0; i <= _legs[0].Bones.Length - 1; i++)
+            {
+
+                copy[i] = _legs[0].Bones[i].position;
+            }
+            for (int i = 0; i <= _legs[0].Bones.Length - 2; i++)
+            {
+
+                distances[i] = Vector3.Distance(_legs[0].Bones[i].position, _legs[0].Bones[i + 1].position);
+            }
+
+
+            float targetRootDist = Vector3.Distance(copy[0], legFutureBases[0].position);
+
+            if (Vector3.Distance(_legs[0].Bones[0].position, legFutureBases[0].position) <distanceBetweenFutureBases)
+            {
+                // The target is unreachable
+
+            }
+            else
+            {
+
+                while (Vector3.Distance(copy[copy.Length - 1], legFutureBases[0].position) != 0 || Vector3.Distance(copy[0], _legs[0].Bones[0].position) != 0)
+                {
+
+                    copy[copy.Length - 1] = legFutureBases[0].position;
+
+                    for (int i = _legs[0].Bones.Length - 2; i >= 0; i--)
+                    {
+                        Vector3 vectorDirector = (copy[i + 1] - copy[i]).normalized;
+                        Vector3 movementVector = vectorDirector * distances[i];
+                        copy[i] = copy[i + 1] - movementVector;
+                    }
+
+                    copy[0] = _legs[0].Bones[0].position;
+
+                    for (int i = 1; i < _legs[0].Bones.Length - 1; i++)
+                    {
+                        Vector3 vectorDirector = (copy[i - 1] - copy[i]).normalized;
+                        Vector3 movementVector = vectorDirector * distances[i - 1];
+                        copy[i] = copy[i - 1] - movementVector;
+
+                    }
+                }
+                for (int i = 0; i <= _legs[0].Bones.Length - 2; i++)
+                {
+                    Vector3 direction = (copy[i + 1] - copy[i]).normalized;
+                    Vector3 antDir = (_legs[0].Bones[i + 1].position - _legs[0].Bones[i].position).normalized;
+                    Quaternion rot = Quaternion.FromToRotation(antDir, direction);
+                    _legs[0].Bones[i].rotation = rot * _legs[0].Bones[i].rotation;
+                    Debug.DrawLine(_legs[0].Bones[i].position, _legs[0].Bones[i + 1].position, Color.yellow);
+                    Debug.DrawLine(copy[i], copy[i + 1], Color.red);
+
+                }
+
+
+            }
+            #endregion
         }
-        #endregion
     }
 }
+
+

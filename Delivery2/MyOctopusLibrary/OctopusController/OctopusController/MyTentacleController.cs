@@ -39,7 +39,7 @@ namespace OctopusController
                         auxiliar = auxiliar.GetChild(1);
                         joints.Add(auxiliar);
                     }
-                  //  _endEffectorSphere[0] = auxiliar.GetChild(1);
+                    //_endEffectorSphere[0] = auxiliar.GetChild(1);
                 break;
                 case TentacleMode.TAIL:
                     //TODO: in _endEffectorsphere you keep a reference to the red sphere 
@@ -63,7 +63,7 @@ namespace OctopusController
                         auxiliar = auxiliar.GetChild(0);
                       joints.Add(auxiliar);
                     }
-                  //  _endEffectorSphere[0] = auxiliar.GetChild(0);
+                    //_endEffectorSphere[0] = auxiliar.GetChild(0);
 
                     break;
             }
