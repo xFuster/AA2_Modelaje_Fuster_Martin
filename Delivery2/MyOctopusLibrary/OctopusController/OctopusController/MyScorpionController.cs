@@ -125,58 +125,60 @@ namespace OctopusController
         //TODO: implement fabrik method to move legs 
         private void updateLegs()
         {
-
-            for (int i = 0; i <= _legs[0].Bones.Length - 1; i++)
+            for (int j = 0; j < 6;j++)
             {
-
-                copy[i] = _legs[0].Bones[i].position;
-            }
-            for (int i = 0; i <= _legs[0].Bones.Length - 2; i++)
-            {
-
-                distances[i] = Vector3.Distance(_legs[0].Bones[i].position, _legs[0].Bones[i + 1].position);
-            }
-
-
-            float targetRootDist = Vector3.Distance(copy[0], legFutureBases[0].position);
-
-            if (Vector3.Distance(_legs[0].Bones[0].position, legFutureBases[0].position) <distanceBetweenFutureBases)
-            {
-                // The target is unreachable
-
-            }
-            else
-            {
-
-                while (Vector3.Distance(copy[copy.Length - 1], legFutureBases[0].position) != 0 || Vector3.Distance(copy[0], _legs[0].Bones[0].position) != 0)
+                for (int i = 0; i <= _legs[0].Bones.Length - 1; i++)
                 {
 
-                    copy[copy.Length - 1] = legFutureBases[0].position;
+                    copy[i] = _legs[j].Bones[i].position;
+                }
+                for (int i = 0; i <= _legs[j].Bones.Length - 2; i++)
+                {
 
-                    for (int i = _legs[0].Bones.Length - 2; i >= 0; i--)
+                    distances[i] = Vector3.Distance(_legs[j].Bones[i].position, _legs[j].Bones[i + 1].position);
+                }
+
+
+                float targetRootDist = Vector3.Distance(copy[0], legFutureBases[j].position);
+
+                if (Vector3.Distance(_legs[j].Bones[0].position, legFutureBases[j].position) < distanceBetweenFutureBases)
+                {
+                    // The target is unreachable
+
+                }
+                else
+                {
+
+                    while (Vector3.Distance(copy[copy.Length - 1], legFutureBases[j].position) != 0 || Vector3.Distance(copy[0], _legs[j].Bones[0].position) != 0)
                     {
-                        Vector3 vectorDirector = (copy[i + 1] - copy[i]).normalized;
-                        Vector3 movementVector = vectorDirector * distances[i];
-                        copy[i] = copy[i + 1] - movementVector;
-                    }
 
-                    copy[0] = _legs[0].Bones[0].position;
+                        copy[copy.Length - 1] = legFutureBases[j].position;
 
-                    for (int i = 1; i < _legs[0].Bones.Length - 1; i++)
-                    {
-                        Vector3 vectorDirector = (copy[i - 1] - copy[i]).normalized;
-                        Vector3 movementVector = vectorDirector * distances[i - 1];
-                        copy[i] = copy[i - 1] - movementVector;
+                        for (int i = _legs[j].Bones.Length - 2; i >= 0; i--)
+                        {
+                            Vector3 vectorDirector = (copy[i + 1] - copy[i]).normalized;
+                            Vector3 movementVector = vectorDirector * distances[i];
+                            copy[i] = copy[i + 1] - movementVector;
+                        }
 
+                        copy[0] = _legs[j].Bones[0].position;
+
+                        for (int i = 1; i < _legs[j].Bones.Length - 1; i++)
+                        {
+                            Vector3 vectorDirector = (copy[i - 1] - copy[i]).normalized;
+                            Vector3 movementVector = vectorDirector * distances[i - 1];
+                            copy[i] = copy[i - 1] - movementVector;
+
+                        }
                     }
                 }
-                for (int i = 0; i <= _legs[0].Bones.Length - 2; i++)
+                for (int i = 0; i <= _legs[j].Bones.Length - 2; i++)
                 {
                     Vector3 direction = (copy[i + 1] - copy[i]).normalized;
-                    Vector3 antDir = (_legs[0].Bones[i + 1].position - _legs[0].Bones[i].position).normalized;
+                    Vector3 antDir = (_legs[j].Bones[i + 1].position - _legs[j].Bones[i].position).normalized;
                     Quaternion rot = Quaternion.FromToRotation(antDir, direction);
-                    _legs[0].Bones[i].rotation = rot * _legs[0].Bones[i].rotation;
-                    Debug.DrawLine(_legs[0].Bones[i].position, _legs[0].Bones[i + 1].position, Color.yellow);
+                    _legs[j].Bones[i].rotation = rot * _legs[j].Bones[i].rotation;
+                    Debug.DrawLine(_legs[j].Bones[i].position, _legs[j].Bones[i + 1].position, Color.yellow);
                     Debug.DrawLine(copy[i], copy[i + 1], Color.red);
 
                 }
