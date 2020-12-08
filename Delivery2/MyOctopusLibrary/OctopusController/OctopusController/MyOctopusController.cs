@@ -51,7 +51,6 @@ namespace OctopusController
 
                 _tentacles[i] = new MyTentacleController();
                 _tentacles[i].LoadTentacleJoints(tentacleRoots[i],TentacleMode.TENTACLE);
-                Debug.Log(_tentacles[i].Bones[i].name);
                 //TODO: initialize any variables needed in ccd
             }
 
