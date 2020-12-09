@@ -43,12 +43,12 @@ namespace OctopusController
                 case TentacleMode.TAIL:
                     //TODO: in _endEffectorsphere you keep a reference to the red sphere 
                     joints.Add(auxiliar);
-
-                    while (auxiliar.name != "joint_4")
+                    while (auxiliar.name != "EndEffector")
                     {
                         auxiliar = auxiliar.GetChild(1);
                         joints.Add(auxiliar);
                     }
+                    
                     break;
                 case TentacleMode.TENTACLE:
                     //TODO: in _endEffectorphere you  keep a reference to the sphere with a collider attached to the endEffector
