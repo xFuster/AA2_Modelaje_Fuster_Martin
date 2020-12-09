@@ -19,7 +19,7 @@ namespace OctopusController
         bool isPlaying = false;
    
 
-        float distanceBetweenFutureBases =1.0f;
+        float distanceBetweenFutureBases =1f;
         //LEGS
         Transform[] legTargets = new Transform[6];
         Transform[] legFutureBases = new Transform[6];
@@ -62,7 +62,7 @@ namespace OctopusController
             //TODO: Initialize anything needed for the Gradient Descent implementation
         }
 
-        //TODO: Check when to start the animation towards target and implement Gradient Descent method to move the joints.
+        // ODO: Check when to start the animation towards target and implement Gradient Descent method to move the joints.
         public void NotifyTailTarget(Transform target)
         {
         }
@@ -125,28 +125,12 @@ namespace OctopusController
             {
                 if (Vector3.Distance(_legs[j].Bones[0].position, legFutureBases[j].position) > distanceBetweenFutureBases)
                 {
-                    if (firstTime[j] == false)
-                    {
-                        auxiliarPositionInitial[j] = _legs[j].Bones[0].position;
-                        auxiliarPositionFinal[j] = legFutureBases[j].position;
-                        //_legs[j].Bones[0].position = legFutureBases[j].position;
-                        personalTimer[j] = animTime;
-                        personalFinisher[j] = animTime+0.5f;
-
-                        firstTime[j] = true;
-
-                    }
-                    if (firstTime[j] == true)
-                    {
+                    
                         
-                        _legs[j].Bones[0].position = Vector3.Lerp(auxiliarPositionInitial[j], auxiliarPositionFinal[j], personalTimer[j] / personalFinisher[j]);
-                        if (personalTimer[j] > personalFinisher[j])
-                        {
-                            firstTime[j] = false;
-                        }
-                    }
+                        _legs[j].Bones[0].position = Vector3.Lerp(_legs[j].Bones[0].position, legFutureBases[j].position, 1.4f);
+                       
+                    
                 }
-                personalTimer[j] += Time.deltaTime;
                 updateLegs(j);
             }
 
