@@ -12,7 +12,7 @@ namespace OctopusController
     {
         //TAIL
         Transform tailTarget;
-        Transform auxito;
+        Vector3 auxito;
         Transform tailEndEffector;
         MyTentacleController _tail;
         float animationRange;
@@ -22,7 +22,10 @@ namespace OctopusController
         Transform[] legFutureBases;
         MyTentacleController[] _legs = new MyTentacleController[6];
 
-        
+        float threeshold = 0.05f;
+
+        float rate = 120.0f;
+
         #region public
         public void InitLegs(Transform[] LegRoots,Transform[] LegFutureBases, Transform[] LegTargets)
         {
@@ -61,7 +64,24 @@ namespace OctopusController
 
         public void UpdateIK()
         {
-            
+            if (Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position)>threeshold)
+            {
+                float deltaZ = 0.01f;
+
+                float distanceBetweenEndEffectorAndTarget = Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position);
+
+                _tail.Bones[0].transform.Rotate(Vector3.up * deltaZ);
+
+                float distanceBetweenEndEffectorAndTarget2 = Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position);
+
+                _tail.Bones[0].transform.Rotate(Vector3.up * -deltaZ);
+
+                float slope = (distanceBetweenEndEffectorAndTarget2 - distanceBetweenEndEffectorAndTarget) / deltaZ;
+
+                _tail.Bones[0].transform.Rotate((Vector3.up * -slope)*rate);
+            }
+
+          
         }
 
         #endregion
@@ -79,18 +99,8 @@ namespace OctopusController
         {
 
         }
-        private float CalculateGradient(Transform joint)
-        {
-            float deltaZ = 0.01f;
-            float distanceBetweenEndEffectorAndTarget = Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position);
-            _tail.Bones[0].Rotate(RotateVect3(deltaZ));
+     
 
-            return ;
-        }
-        private void RotateVect3(float angle)
-        {
-            auxito.transform.Rotate(Vector3.up * angle);
-        }
         //TODO: implement fabrik method to move legs 
         private void updateLegs()
         {
