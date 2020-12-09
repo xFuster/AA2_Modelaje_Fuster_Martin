@@ -17,10 +17,9 @@ namespace OctopusController
         float animationRange;
         float animTime = 0;
         bool isPlaying = false;
-        public Vector3 start = new Vector3(-4.19f, -2.052f, -2.37f);
-        public Vector3 end = new Vector3(-4.19f, -2.052f, 47.0f);
+   
 
-        float distanceBetweenFutureBases = 1.0f;
+        float distanceBetweenFutureBases =2.0f;
         //LEGS
         Transform[] legTargets = new Transform[6];
         Transform[] legFutureBases = new Transform[6];
@@ -43,6 +42,7 @@ namespace OctopusController
                 _legs[i].LoadTentacleJoints(LegRoots[i], TentacleMode.LEG);
                 legFutureBases[i] = LegFutureBases[i];
                 legTargets[i] = LegTargets[i];
+                
                 //TODO: initialize anything needed for the FABRIK implementation
             }
             distances = new float[_legs[0].Bones.Length - 1];
@@ -65,9 +65,8 @@ namespace OctopusController
         public void NotifyStartWalk()
         {
             isPlaying = true;
-            animTime = 0;
             animationRange = 5;
-           
+            animTime = 0;
             //float animTime = 0;
             //animationRange = 5;
 
@@ -87,6 +86,7 @@ namespace OctopusController
 
         public void UpdateIK()
         {
+
             if (isPlaying == true)
             {
                 //copy = copy.Reverse()
@@ -95,6 +95,7 @@ namespace OctopusController
                 if (animTime < animationRange)
                 {
                     updateLegPos();
+
                 }
                 else
                 {
@@ -116,9 +117,11 @@ namespace OctopusController
             //check for the distance to the futureBase, then if it's too far away start moving the leg towards the future base position
             for (int j = 0; j < 6; j++)
             {
-                if (Vector3.Distance(_legs[j].Bones[0].position, legTargets[j].position) > distanceBetweenFutureBases)
+                if (Vector3.Distance(_legs[j].Bones[0].position, legFutureBases[j].position) > distanceBetweenFutureBases)
                 {
+                    
                     _legs[j].Bones[0].position = legFutureBases[j].position;
+                     
                 }
                 updateLegs(j);
 
@@ -133,24 +136,30 @@ namespace OctopusController
         //TODO: implement fabrik method to move legs 
         private void updateLegs(int idPata)
         {
-            
-                for (int i = 0; i <= _legs[0].Bones.Length - 1; i++)
-                {
 
-                    copy[i] = _legs[idPata].Bones[i].position;
+            for (int i = 0; i <= _legs[0].Bones.Length - 1; i++)
+            {
+
+                copy[i] = _legs[idPata].Bones[i].position;
+            }
+
+            for (int i = 0; i <= _legs[idPata].Bones.Length - 2; i++)
+            {
+
+                distances[i] = Vector3.Distance(_legs[idPata].Bones[i].position, _legs[idPata].Bones[i + 1].position);
+            }
+
+            float targetRootDist = Vector3.Distance(copy[0], legTargets[idPata].position);
+            if (targetRootDist > distances.Sum())
+            {
+
                 }
-                for (int i = 0; i <= _legs[idPata].Bones.Length - 2; i++)
+
+                else
                 {
-
-                    distances[i] = Vector3.Distance(_legs[idPata].Bones[i].position, _legs[idPata].Bones[i + 1].position);
-                }
-
-
-                float targetRootDist = Vector3.Distance(copy[0], legTargets[idPata].position);
-
                 while (Vector3.Distance(copy[copy.Length - 1], legTargets[idPata].position) != 0 || Vector3.Distance(copy[0], _legs[idPata].Bones[0].position) != 0)
                 {
-
+                    Debug.Log("lleven a mi perro al veterinario");
                     copy[copy.Length - 1] = legTargets[idPata].position;
 
                     for (int i = _legs[idPata].Bones.Length - 2; i >= 0; i--)
@@ -179,9 +188,11 @@ namespace OctopusController
                     Debug.DrawLine(_legs[idPata].Bones[i].position, _legs[idPata].Bones[i + 1].position, Color.yellow);
                     Debug.DrawLine(copy[i], copy[i + 1], Color.red);
 
+                    //}
+                    //}
                 }
-
-
+            }
+        
             #endregion
         }
     }
