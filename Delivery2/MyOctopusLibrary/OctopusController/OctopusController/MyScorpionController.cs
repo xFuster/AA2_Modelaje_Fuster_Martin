@@ -94,7 +94,7 @@ namespace OctopusController
                 // Debug.Log(animTime);
                 if (animTime < animationRange)
                 {
-                    updateLegs();
+                    updateLegPos();
                 }
                 else
                 {
@@ -114,7 +114,11 @@ namespace OctopusController
         private void updateLegPos()
         {
             //check for the distance to the futureBase, then if it's too far away start moving the leg towards the future base position
-            //
+            for (int j = 0; j < 6; j++)
+            {
+                if (Vector3.Distance(_legs[j].Bones[0].position, legTargets[j].position) > distanceBetweenFutureBases)
+                    updateLegs(j);
+            }
 
         }
         //TODO: implement Gradient Descent method to move tail if necessary
@@ -123,68 +127,57 @@ namespace OctopusController
 
         }
         //TODO: implement fabrik method to move legs 
-        private void updateLegs()
+        private void updateLegs(int idPata)
         {
-            for (int j = 0; j < 6;j++)
-            {
+            
                 for (int i = 0; i <= _legs[0].Bones.Length - 1; i++)
                 {
 
-                    copy[i] = _legs[j].Bones[i].position;
+                    copy[i] = _legs[idPata].Bones[i].position;
                 }
-                for (int i = 0; i <= _legs[j].Bones.Length - 2; i++)
+                for (int i = 0; i <= _legs[idPata].Bones.Length - 2; i++)
                 {
 
-                    distances[i] = Vector3.Distance(_legs[j].Bones[i].position, _legs[j].Bones[i + 1].position);
+                    distances[i] = Vector3.Distance(_legs[idPata].Bones[i].position, _legs[idPata].Bones[i + 1].position);
                 }
 
 
-                float targetRootDist = Vector3.Distance(copy[0], legFutureBases[j].position);
+                float targetRootDist = Vector3.Distance(copy[0], legTargets[idPata].position);
 
-                if (Vector3.Distance(_legs[j].Bones[0].position, legFutureBases[j].position) < distanceBetweenFutureBases)
-                {
-                    // The target is unreachable
-
-                }
-                else
+                while (Vector3.Distance(copy[copy.Length - 1], legTargets[idPata].position) != 0 || Vector3.Distance(copy[0], _legs[idPata].Bones[0].position) != 0)
                 {
 
-                    while (Vector3.Distance(copy[copy.Length - 1], legFutureBases[j].position) != 0 || Vector3.Distance(copy[0], _legs[j].Bones[0].position) != 0)
+                    copy[copy.Length - 1] = legTargets[idPata].position;
+
+                    for (int i = _legs[idPata].Bones.Length - 2; i >= 0; i--)
                     {
+                        Vector3 vectorDirector = (copy[i + 1] - copy[i]).normalized;
+                        Vector3 movementVector = vectorDirector * distances[i];
+                        copy[i] = copy[i + 1] - movementVector;
+                    }
 
-                        copy[copy.Length - 1] = legFutureBases[j].position;
+                    copy[0] = _legs[idPata].Bones[0].position;
 
-                        for (int i = _legs[j].Bones.Length - 2; i >= 0; i--)
-                        {
-                            Vector3 vectorDirector = (copy[i + 1] - copy[i]).normalized;
-                            Vector3 movementVector = vectorDirector * distances[i];
-                            copy[i] = copy[i + 1] - movementVector;
-                        }
+                    for (int i = 1; i < _legs[idPata].Bones.Length - 1; i++)
+                    {
+                        Vector3 vectorDirector = (copy[i - 1] - copy[i]).normalized;
+                        Vector3 movementVector = vectorDirector * distances[i - 1];
+                        copy[i] = copy[i - 1] - movementVector;
 
-                        copy[0] = _legs[j].Bones[0].position;
-
-                        for (int i = 1; i < _legs[j].Bones.Length - 1; i++)
-                        {
-                            Vector3 vectorDirector = (copy[i - 1] - copy[i]).normalized;
-                            Vector3 movementVector = vectorDirector * distances[i - 1];
-                            copy[i] = copy[i - 1] - movementVector;
-
-                        }
                     }
                 }
-                for (int i = 0; i <= _legs[j].Bones.Length - 2; i++)
+                for (int i = 0; i <= _legs[idPata].Bones.Length - 2; i++)
                 {
                     Vector3 direction = (copy[i + 1] - copy[i]).normalized;
-                    Vector3 antDir = (_legs[j].Bones[i + 1].position - _legs[j].Bones[i].position).normalized;
+                    Vector3 antDir = (_legs[idPata].Bones[i + 1].position - _legs[idPata].Bones[i].position).normalized;
                     Quaternion rot = Quaternion.FromToRotation(antDir, direction);
-                    _legs[j].Bones[i].rotation = rot * _legs[j].Bones[i].rotation;
-                    Debug.DrawLine(_legs[j].Bones[i].position, _legs[j].Bones[i + 1].position, Color.yellow);
+                    _legs[idPata].Bones[i].rotation = rot * _legs[idPata].Bones[i].rotation;
+                    Debug.DrawLine(_legs[idPata].Bones[i].position, _legs[idPata].Bones[i + 1].position, Color.yellow);
                     Debug.DrawLine(copy[i], copy[i + 1], Color.red);
 
                 }
 
 
-            }
             #endregion
         }
     }
