@@ -19,7 +19,7 @@ namespace OctopusController
         bool isPlaying = false;
    
 
-        float distanceBetweenFutureBases =1.5f;
+        float distanceBetweenFutureBases =1.0f;
         //LEGS
         Transform[] legTargets = new Transform[6];
         Transform[] legFutureBases = new Transform[6];
@@ -28,7 +28,6 @@ namespace OctopusController
         Vector3[] auxiliarPositionInitial = new Vector3[6];
         Vector3[] auxiliarPositionFinal = new Vector3[6];
         bool[] firstTime = new bool[6];
-        bool[] lerp = new bool[6];
         float[] personalTimer = new float[6];
         float[] personalFinisher = new float[6];
         private Vector3[] copy;
@@ -49,6 +48,7 @@ namespace OctopusController
                 legFutureBases[i] = LegFutureBases[i];
                 legTargets[i] = LegTargets[i];
                 
+
                 //TODO: initialize anything needed for the FABRIK implementation
             }
             distances = new float[_legs[0].Bones.Length - 1];
@@ -123,7 +123,7 @@ namespace OctopusController
             //check for the distance to the futureBase, then if it's too far away start moving the leg towards the future base position
             for (int j = 0; j < 6; j++)
             {
-                if (Vector3.Distance(_legs[j].Bones[0].position, legTargets[j].position) > distanceBetweenFutureBases)
+                if (Vector3.Distance(_legs[j].Bones[0].position, legFutureBases[j].position) > distanceBetweenFutureBases)
                 {
                     if (firstTime[j] == false)
                     {
@@ -131,7 +131,7 @@ namespace OctopusController
                         auxiliarPositionFinal[j] = legFutureBases[j].position;
                         //_legs[j].Bones[0].position = legFutureBases[j].position;
                         personalTimer[j] = animTime;
-                        personalFinisher[j] = animTime+1.5f;
+                        personalFinisher[j] = animTime+0.5f;
 
                         firstTime[j] = true;
 
@@ -140,7 +140,7 @@ namespace OctopusController
                     {
                         
                         _legs[j].Bones[0].position = Vector3.Lerp(auxiliarPositionInitial[j], auxiliarPositionFinal[j], personalTimer[j] / personalFinisher[j]);
-                        if (personalTimer[j] < personalFinisher[j])
+                        if (personalTimer[j] > personalFinisher[j])
                         {
                             firstTime[j] = false;
                         }
