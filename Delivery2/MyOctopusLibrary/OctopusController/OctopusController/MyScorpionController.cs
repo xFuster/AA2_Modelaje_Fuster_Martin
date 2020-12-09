@@ -117,7 +117,11 @@ namespace OctopusController
             for (int j = 0; j < 6; j++)
             {
                 if (Vector3.Distance(_legs[j].Bones[0].position, legTargets[j].position) > distanceBetweenFutureBases)
-                    updateLegs(j);
+                {
+                    _legs[j].Bones[0].position = legFutureBases[j].position;
+                }
+                updateLegs(j);
+
             }
 
         }

@@ -33,7 +33,9 @@ namespace OctopusController
             switch (tentacleMode){
                 case TentacleMode.LEG:
                     //TODO: in _endEffectorsphere you keep a reference to the base of the leg
+                    joints.Add(root);
                     auxiliar = auxiliar.GetChild(0);
+
                     while (auxiliar.name != "Joint2")
                     {
                         auxiliar = auxiliar.GetChild(1);
