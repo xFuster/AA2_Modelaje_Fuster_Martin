@@ -66,19 +66,12 @@ namespace OctopusController
         {
             if (Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position)>threeshold)
             {
-                float deltaZ = 0.01f;
+                for (int i = 0; i < _tail.Bones.Length - 2; i++)
+                {
 
-                float distanceBetweenEndEffectorAndTarget = Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position);
-
-                _tail.Bones[0].transform.Rotate(Vector3.up * deltaZ);
-
-                float distanceBetweenEndEffectorAndTarget2 = Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position);
-
-                _tail.Bones[0].transform.Rotate(Vector3.up * -deltaZ);
-
-                float slope = (distanceBetweenEndEffectorAndTarget2 - distanceBetweenEndEffectorAndTarget) / deltaZ;
-
-                _tail.Bones[0].transform.Rotate((Vector3.up * -slope)*rate);
+                    float slope = CalculateSlope(_tail.Bones[i]);
+                    _tail.Bones[i].transform.Rotate((Vector3.forward * -slope) * rate);
+                }
             }
 
           
@@ -99,7 +92,19 @@ namespace OctopusController
         {
 
         }
-     
+        private float CalculateSlope(Transform actualJoint)
+        {
+            float deltaZ = 0.01f;
+
+            float distanceBetweenEndEffectorAndTarget = Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position);
+
+            actualJoint.transform.Rotate(Vector3.forward * deltaZ);
+
+            float distanceBetweenEndEffectorAndTarget2 = Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position);
+
+          actualJoint.transform.Rotate(Vector3.forward * -deltaZ);
+            return (distanceBetweenEndEffectorAndTarget2 - distanceBetweenEndEffectorAndTarget) / deltaZ;
+        }
 
         //TODO: implement fabrik method to move legs 
         private void updateLegs()
@@ -108,4 +113,5 @@ namespace OctopusController
         }
         #endregion
     }
+
 }
