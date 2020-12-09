@@ -182,7 +182,6 @@ namespace OctopusController
                 {
                 while (Vector3.Distance(copy[copy.Length - 1], legTargets[idPata].position) != 0 || Vector3.Distance(copy[0], _legs[idPata].Bones[0].position) != 0)
                 {
-                    Debug.Log("lleven a mi perro al veterinario");
                     copy[copy.Length - 1] = legTargets[idPata].position;
 
                     for (int i = _legs[idPata].Bones.Length - 2; i >= 0; i--)
@@ -208,8 +207,8 @@ namespace OctopusController
                     Vector3 antDir = (_legs[idPata].Bones[i + 1].position - _legs[idPata].Bones[i].position).normalized;
                     Quaternion rot = Quaternion.FromToRotation(antDir, direction);
                     _legs[idPata].Bones[i].rotation = rot * _legs[idPata].Bones[i].rotation;
-                    Debug.DrawLine(_legs[idPata].Bones[i].position, _legs[idPata].Bones[i + 1].position, Color.yellow);
-                    Debug.DrawLine(copy[i], copy[i + 1], Color.red);
+                    //Debug.DrawLine(_legs[idPata].Bones[i].position, _legs[idPata].Bones[i + 1].position, Color.yellow);
+                    //Debug.DrawLine(copy[i], copy[i + 1], Color.red);
 
                     //}
                     //}
