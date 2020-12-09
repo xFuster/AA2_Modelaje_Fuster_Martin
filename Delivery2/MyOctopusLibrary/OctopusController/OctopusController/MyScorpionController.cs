@@ -19,12 +19,18 @@ namespace OctopusController
         bool isPlaying = false;
    
 
-        float distanceBetweenFutureBases =2.0f;
+        float distanceBetweenFutureBases =1.5f;
         //LEGS
         Transform[] legTargets = new Transform[6];
         Transform[] legFutureBases = new Transform[6];
         MyTentacleController[] _legs = new MyTentacleController[6];
 
+        Vector3[] auxiliarPositionInitial = new Vector3[6];
+        Vector3[] auxiliarPositionFinal = new Vector3[6];
+        bool[] firstTime = new bool[6];
+        bool[] lerp = new bool[6];
+        float[] personalTimer = new float[6];
+        float[] personalFinisher = new float[6];
         private Vector3[] copy;
        
 
@@ -117,14 +123,31 @@ namespace OctopusController
             //check for the distance to the futureBase, then if it's too far away start moving the leg towards the future base position
             for (int j = 0; j < 6; j++)
             {
-                if (Vector3.Distance(_legs[j].Bones[0].position, legFutureBases[j].position) > distanceBetweenFutureBases)
+                if (Vector3.Distance(_legs[j].Bones[0].position, legTargets[j].position) > distanceBetweenFutureBases)
                 {
-                    
-                    _legs[j].Bones[0].position = legFutureBases[j].position;
-                     
-                }
-                updateLegs(j);
+                    if (firstTime[j] == false)
+                    {
+                        auxiliarPositionInitial[j] = _legs[j].Bones[0].position;
+                        auxiliarPositionFinal[j] = legFutureBases[j].position;
+                        //_legs[j].Bones[0].position = legFutureBases[j].position;
+                        personalTimer[j] = animTime;
+                        personalFinisher[j] = animTime+1.5f;
 
+                        firstTime[j] = true;
+
+                    }
+                    if (firstTime[j] == true)
+                    {
+                        
+                        _legs[j].Bones[0].position = Vector3.Lerp(auxiliarPositionInitial[j], auxiliarPositionFinal[j], personalTimer[j] / personalFinisher[j]);
+                        if (personalTimer[j] < personalFinisher[j])
+                        {
+                            firstTime[j] = false;
+                        }
+                    }
+                }
+                personalTimer[j] += Time.deltaTime;
+                updateLegs(j);
             }
 
         }
