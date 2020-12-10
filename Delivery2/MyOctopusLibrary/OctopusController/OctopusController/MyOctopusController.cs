@@ -109,6 +109,7 @@ namespace OctopusController
         {
             for (int i = 0; i < _tentacles.Length; i++)
             {
+                // Create arrays of f
                 _theta = new float[_tentacles[i].Bones.Length];
                 _sin = new float[_tentacles[i].Bones.Length];
                 _cos = new float[_tentacles[i].Bones.Length];
@@ -117,10 +118,10 @@ namespace OctopusController
                     // going back up to the root
                     for (int j = _tentacles[i].Bones.Length - 2; j >= 0; j--)
                     {
-                        // The vector from the ith joint to the end effector
+                        //  we make a vector from endEffector to the joint
                         Vector3 r1 = _tentacles[i].Bones[_tentacles[i].Bones.Length - 1].transform.position - _tentacles[i].Bones[j].transform.position;
 
-                        // The vector from the ith joint to the target
+                        // Depending if isShooting the target will be normal target or the random
                         if (isShooting == true)
                         {
                              r2 = _target.transform.position - _tentacles[i].Bones[j].transform.position;
@@ -130,34 +131,27 @@ namespace OctopusController
                         {
                              r2 = _randomTargets[i].transform.position - _tentacles[i].Bones[j].transform.position;
                         }
-                        // to avoid dividing by tiny numbers
+                        // avoid the division of small numbers
                         if (r1.magnitude * r2.magnitude <= 0.001f)
                         {
-
-                            // cos ? sin? 
                             _cos[j] = 1;
                             _sin[j] = 0;
-
                         }
                         else
                         {
-                            // find the components using dot and cross product
+                            // we use dot and cross product
                             _cos[j] = Vector3.Dot(r1, r2) / (r1.magnitude * r2.magnitude);
                             _sin[j] = Vector3.Cross(r1, r2).magnitude / (r1.magnitude * r2.magnitude);
 
                         }
 
                         Vector3 axis = Vector3.Cross(r1, r2).normalized;
-
-                        // find the angle between r1 and r2 (and clamp values if needed avoid errors)
                         _theta[j] = Mathf.Acos(Mathf.Clamp(_cos[j], -1, 1));
 
-
-                        //Optional. correct angles if needed, depending on angles invert angle if sin component is negative
                         if (_sin[j] < 0.0f)
                             _theta[j] *= -1.0f;
 
-                        // obtain an angle value between -pi and pi, and then convert to degrees
+                        // obtain an angle 
                         if (_theta[j] > Mathf.PI)
                         {
                             _theta[j] -= Mathf.PI * 2;
@@ -167,6 +161,7 @@ namespace OctopusController
                             _theta[j] += Mathf.PI * 2;
                         }
 
+                        // To try to avoid strange rotations we limit the Z rotation
                         _theta[j] *= Mathf.Rad2Deg;
                         if(_theta[j] > 15.0f)
                         {
@@ -177,18 +172,10 @@ namespace OctopusController
                             _theta[j] = -15;
                         }
 
-                        // rotate the ith joint along the axis by theta degrees in the world space.
                         _tentacles[i].Bones[j].transform.Rotate(axis, _theta[j], Space.World);
-
-
                         Quaternion twist = new Quaternion(0, _tentacles[i].Bones[j].transform.localRotation.y, 0, _tentacles[i].Bones[j].transform.localRotation.w);
-
                         twist = twist.normalized;
-
                         Quaternion swing = _tentacles[i].Bones[j].transform.localRotation * Quaternion.Inverse(twist);
-
-
-
                         _tentacles[i].Bones[j].transform.localRotation = swing.normalized;
 
                     }
