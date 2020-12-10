@@ -79,3 +79,10 @@ C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Martin_Fuster\Delivery2\MyOct
 C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Martin_Fuster\Delivery2\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.dll
 C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Martin_Fuster\Delivery2\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.pdb
 C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Martin_Fuster\Delivery2\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.csprojAssemblyReference.cache
+C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Fuster_Martin\Delivery2\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.csprojAssemblyReference.cache
+C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Fuster_Martin\Delivery2\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CoreCompileInputs.cache
+C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Fuster_Martin\Delivery2\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.dll
+C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Fuster_Martin\Delivery2\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.pdb
+C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Fuster_Martin\Delivery2\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\OctopusController.dll
+C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Fuster_Martin\Delivery2\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\OctopusController.pdb
+C:\Users\ricar\Documents\Repositorios\AA2_Modelaje_Fuster_Martin\Delivery2\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CopyComplete

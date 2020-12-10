@@ -58,7 +58,7 @@ namespace OctopusController
                     while (auxiliar.name != "Bone.001_end")
                     {
                         auxiliar = auxiliar.GetChild(0);
-                      joints.Add(auxiliar);
+                          joints.Add(auxiliar);
                     }
                     break;
             }
