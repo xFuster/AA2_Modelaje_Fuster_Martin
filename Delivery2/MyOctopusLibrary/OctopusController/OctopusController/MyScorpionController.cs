@@ -45,6 +45,7 @@ namespace OctopusController
             _tail = new MyTentacleController();
             _tail.LoadTentacleJoints(TailBase, TentacleMode.TAIL);
             //TODO: Initialize anything needed for the Gradient Descent implementation
+            // we get the tailEndEffector from the tail bones
             tailEndEffector = _tail.Bones[_tail.Bones.Length - 1];
         }
 
@@ -68,17 +69,12 @@ namespace OctopusController
             {
                 for (int i = 0; i < _tail.Bones.Length - 2; i++)
                 {
-
                     float slope = CalculateSlope(_tail.Bones[i]);
                     _tail.Bones[i].transform.Rotate((Vector3.forward * -slope) * rate);
                 }
-            }
-
-          
+            } 
         }
-
         #endregion
-
 
         #region private
         //TODO: Implement the leg base animations and logic
@@ -95,14 +91,10 @@ namespace OctopusController
         private float CalculateSlope(Transform actualJoint)
         {
             float deltaZ = 0.01f;
-
             float distanceBetweenEndEffectorAndTarget = Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position);
-
             actualJoint.transform.Rotate(Vector3.forward * deltaZ);
-
             float distanceBetweenEndEffectorAndTarget2 = Vector3.Distance(tailEndEffector.transform.position, tailTarget.transform.position);
-
-          actualJoint.transform.Rotate(Vector3.forward * -deltaZ);
+            actualJoint.transform.Rotate(Vector3.forward * -deltaZ);
             return (distanceBetweenEndEffectorAndTarget2 - distanceBetweenEndEffectorAndTarget) / deltaZ;
         }
 

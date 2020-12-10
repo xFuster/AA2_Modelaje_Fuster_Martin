@@ -33,6 +33,7 @@ namespace OctopusController
             switch (tentacleMode){
                 case TentacleMode.LEG:
                     //TODO: in _endEffectorsphere you keep a reference to the base of the leg
+                    // as we recive the root we need the auxiliar to visit joint0
                     auxiliar = auxiliar.GetChild(0);
                     while (auxiliar.name != "Joint2")
                     {
@@ -42,6 +43,7 @@ namespace OctopusController
                 break;
                 case TentacleMode.TAIL:
                     //TODO: in _endEffectorsphere you keep a reference to the red sphere 
+                    // As we recive joint 0 we can use the auxiliar and add it to joints directly
                     joints.Add(auxiliar);
                     while (auxiliar.name != "EndEffector")
                     {
@@ -52,12 +54,12 @@ namespace OctopusController
                     break;
                 case TentacleMode.TENTACLE:
                     //TODO: in _endEffectorphere you  keep a reference to the sphere with a collider attached to the endEffector
+                    // Here we have to navigate to discharge armature and bones
                     auxiliar = auxiliar.GetChild(0);
                     auxiliar = auxiliar.GetChild(0);
-              
                     while (auxiliar.name != "Bone.001_end")
                     {
-                        auxiliar = auxiliar.GetChild(0);
+                      auxiliar = auxiliar.GetChild(0);
                       joints.Add(auxiliar);
                     }
                     break;
