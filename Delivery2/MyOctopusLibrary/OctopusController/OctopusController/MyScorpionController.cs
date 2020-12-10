@@ -47,8 +47,6 @@ namespace OctopusController
                 _legs[i].LoadTentacleJoints(LegRoots[i], TentacleMode.LEG);
                 legFutureBases[i] = LegFutureBases[i];
                 legTargets[i] = LegTargets[i];
-                
-
                 //TODO: initialize anything needed for the FABRIK implementation
             }
             distances = new float[_legs[0].Bones.Length - 1];
@@ -73,49 +71,27 @@ namespace OctopusController
             isPlaying = true;
             animationRange = 5;
             animTime = 0;
-            //float animTime = 0;
-            //animationRange = 5;
-
-            //Debug.Log(animationRange);
-
-            //while (animTime < animationRange)
-            //{
-            //    Debug.Log("ALTOKE");
-
-            //    updateLegs();
-            //    animTime += 0.005f;
-            //}
-
         }
 
         //TODO: create the apropiate animations and update the IK from the legs and tail
 
         public void UpdateIK()
         {
-
+            // If player press space it triggers the animation and starts to move calling updateLegPos
             if (isPlaying == true)
             {
-                //copy = copy.Reverse()
                 animTime += Time.deltaTime;
-                // Debug.Log(animTime);
                 if (animTime < animationRange)
                 {
                     updateLegPos();
-
                 }
                 else
                 {
                     isPlaying = false;
                 }
-
             }
-
-
-            //updateLegs();
         }
         #endregion
-
-
         #region private
         //TODO: Implement the leg base animations and logic
         private void updateLegPos()
@@ -125,11 +101,7 @@ namespace OctopusController
             {
                 if (Vector3.Distance(_legs[j].Bones[0].position, legFutureBases[j].position) > distanceBetweenFutureBases)
                 {
-                    
-                        
-                        _legs[j].Bones[0].position = Vector3.Lerp(_legs[j].Bones[0].position, legFutureBases[j].position, 1.4f);
-                       
-                    
+                   _legs[j].Bones[0].position = Vector3.Lerp(_legs[j].Bones[0].position, legFutureBases[j].position, 1.4f);
                 }
                 updateLegs(j);
             }
@@ -143,31 +115,25 @@ namespace OctopusController
         //TODO: implement fabrik method to move legs 
         private void updateLegs(int idPata)
         {
-
+            // Save the position of the bones in copy
             for (int i = 0; i <= _legs[0].Bones.Length - 1; i++)
             {
-
                 copy[i] = _legs[idPata].Bones[i].position;
             }
-
+            // Calculate the distance between the bones
             for (int i = 0; i <= _legs[idPata].Bones.Length - 2; i++)
             {
-
                 distances[i] = Vector3.Distance(_legs[idPata].Bones[i].position, _legs[idPata].Bones[i + 1].position);
             }
 
             float targetRootDist = Vector3.Distance(copy[0], legTargets[idPata].position);
-            if (targetRootDist > distances.Sum())
+            if (targetRootDist < distances.Sum())
             {
-
-                }
-
-                else
-                {
+                // A loop that checks if the bones separate
                 while (Vector3.Distance(copy[copy.Length - 1], legTargets[idPata].position) != 0 || Vector3.Distance(copy[0], _legs[idPata].Bones[0].position) != 0)
                 {
                     copy[copy.Length - 1] = legTargets[idPata].position;
-
+                    // First stage of Fabrik forwardReaching
                     for (int i = _legs[idPata].Bones.Length - 2; i >= 0; i--)
                     {
                         Vector3 vectorDirector = (copy[i + 1] - copy[i]).normalized;
@@ -176,7 +142,7 @@ namespace OctopusController
                     }
 
                     copy[0] = _legs[idPata].Bones[0].position;
-
+                    // Second stage of Fabrik backwardReaching
                     for (int i = 1; i < _legs[idPata].Bones.Length - 1; i++)
                     {
                         Vector3 vectorDirector = (copy[i - 1] - copy[i]).normalized;
@@ -185,20 +151,15 @@ namespace OctopusController
 
                     }
                 }
+                // Update original rotations
                 for (int i = 0; i <= _legs[idPata].Bones.Length - 2; i++)
                 {
                     Vector3 direction = (copy[i + 1] - copy[i]).normalized;
                     Vector3 antDir = (_legs[idPata].Bones[i + 1].position - _legs[idPata].Bones[i].position).normalized;
                     Quaternion rot = Quaternion.FromToRotation(antDir, direction);
                     _legs[idPata].Bones[i].rotation = rot * _legs[idPata].Bones[i].rotation;
-                    //Debug.DrawLine(_legs[idPata].Bones[i].position, _legs[idPata].Bones[i + 1].position, Color.yellow);
-                    //Debug.DrawLine(copy[i], copy[i + 1], Color.red);
-
-                    //}
-                    //}
                 }
             }
-        
             #endregion
         }
     }
