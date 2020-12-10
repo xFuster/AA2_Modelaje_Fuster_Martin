@@ -33,12 +33,21 @@ namespace OctopusController
             switch (tentacleMode){
                 case TentacleMode.LEG:
                     //TODO: in _endEffectorsphere you keep a reference to the base of the leg
-                    auxiliar = auxiliar.GetChild(0);
+                    auxiliar = root.GetChild(0);
+
+                    joints.Add(auxiliar);
+                    Debug.Log(auxiliar.name);
+
                     while (auxiliar.name != "Joint2")
                     {
                         auxiliar = auxiliar.GetChild(1);
+                        Debug.Log(auxiliar.name);
+
                         joints.Add(auxiliar);
                     }
+                    auxiliar = auxiliar.GetChild(1);
+                    joints.Add(auxiliar);
+                    //_endEffectorSphere[0] = auxiliar.GetChild(1);
                 break;
                 case TentacleMode.TAIL:
                     //TODO: in _endEffectorsphere you keep a reference to the red sphere 
@@ -49,6 +58,8 @@ namespace OctopusController
                         auxiliar = auxiliar.GetChild(1);
                         joints.Add(auxiliar);
                     }
+                    //_endEffectorSphere[0] = auxiliar.GetChild(1);
+
                     break;
                 case TentacleMode.TENTACLE:
                     //TODO: in _endEffectorphere you  keep a reference to the sphere with a collider attached to the endEffector
@@ -60,6 +71,8 @@ namespace OctopusController
                         auxiliar = auxiliar.GetChild(0);
                       joints.Add(auxiliar);
                     }
+                    //_endEffectorSphere[0] = auxiliar.GetChild(0);
+
                     break;
             }
             _bones = joints.ToArray();
